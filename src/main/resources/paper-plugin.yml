@@ -1,0 +1,14 @@
+name: Sweeper
+version: '${version}'
+main: dev.sweeper.SweeperPlugin
+api-version: '1.21'
+description: Timed clean-ups for dropped items and mobs, built to stay light on the tick.
+authors:
+  - Cozy Survival
+
+dependencies:
+  server:
+    PlaceholderAPI:
+      load: BEFORE
+      required: false
+      join-classpath: true

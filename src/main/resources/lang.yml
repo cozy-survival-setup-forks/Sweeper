@@ -1,0 +1,106 @@
+# Sweeper - lang.yml
+# Every message can be sent as chat, action bar or both, with an optional sound.
+# Text supports MiniMessage as well as &a and &#RRGGBB codes.
+
+warning:
+  # Placeholders: <time>
+  enabled: true
+  type: [chat, actionbar]
+  chat: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>Dropped entities are clearing in <#FFD166><time></#FFD166>."
+  actionbar: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>Dropped entities are clearing in <#FFD166><time></#FFD166>."
+  sound:
+    enabled: true
+    key: "minecraft:block.note_block.pling"
+    source: MASTER
+    volume: 1.0
+    pitch: 1.2
+
+complete:
+  # Placeholders: <total>, <items>, <entities>
+  enabled: true
+  type: [chat, actionbar]
+  chat: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <#8BF0A6><total></#8BF0A6> <white>dropped entities have been removed!"
+  actionbar: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <#8BF0A6><total></#8BF0A6> <white>dropped entities have been removed!"
+  sound:
+    enabled: true
+    key: "minecraft:entity.experience_orb.pickup"
+    source: MASTER
+    volume: 1.0
+    pitch: 1.0
+
+timer:
+  # Reply to /sweeper timer. Placeholders: <time>
+  enabled: true
+  type: [chat, actionbar]
+  chat: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>Dropped entities are clearing in <#FFD166><time></#FFD166>."
+  actionbar: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>Dropped entities are clearing in <#FFD166><time></#FFD166>."
+  sound:
+    enabled: true
+    key: "minecraft:block.note_block.pling"
+    source: MASTER
+    volume: 1.0
+    pitch: 1.0
+
+messages_toggle:
+  # Placeholders: <state>
+  enabled: true
+  type: [chat, actionbar]
+  chat: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>Sweep messages have been <state>."
+  actionbar: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>Sweep messages have been <state>."
+  sound:
+    enabled: true
+    key: "minecraft:block.note_block.pling"
+    source: MASTER
+    volume: 1.0
+    pitch: 1.2
+
+protection_toggle:
+  # Placeholders: <state>
+  enabled: true
+  type: [chat, actionbar]
+  chat: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>Drop protection has been <state>."
+  actionbar: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>Drop protection has been <state>."
+  sound:
+    enabled: true
+    key: "minecraft:block.note_block.pling"
+    source: MASTER
+    volume: 1.0
+    pitch: 1.2
+
+drop_blocked:
+  # Placeholders: <time>
+  enabled: true
+  type: [chat, actionbar]
+  chat: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>Please wait <#FFD166><time></#FFD166> before dropping items."
+  actionbar: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>Please wait <#FFD166><time></#FFD166> before dropping items."
+  sound:
+    enabled: true
+    key: "minecraft:entity.villager.no"
+    source: MASTER
+    volume: 1.0
+    pitch: 1.0
+
+reload:
+  enabled: true
+  type: [chat]
+  chat: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>Config and messages <#8BF0A6>reloaded</#8BF0A6>."
+
+clean_started:
+  enabled: true
+  type: [chat]
+  chat: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>Clean-up <#8BF0A6>started</#8BF0A6>."
+
+clean_busy:
+  enabled: true
+  type: [chat]
+  chat: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>A clean-up is <#FFD166>already running</#FFD166>."
+
+players_only:
+  enabled: true
+  type: [chat]
+  chat: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>This command is <#FF8C8C>for players</#FF8C8C> only."
+
+# Words used for <state>.
+states:
+  enabled: "<#8BF0A6>enabled</#8BF0A6>"
+  disabled: "<#FF8C8C>disabled</#FF8C8C>"

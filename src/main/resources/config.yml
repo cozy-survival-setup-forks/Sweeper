@@ -1,0 +1,129 @@
+# Sweeper - config.yml
+# Durations look like 30s, 10m, 1h30m. Reload with /sweeper reload.
+
+# Time between automatic clean-ups.
+interval: 10m
+
+# How long before a clean-up each warning is sent.
+warning_times:
+  - 60s
+  - 30s
+  - 10s
+  - 5s
+  - 3s
+  - 2s
+  - 1s
+
+# Don't send the "removed" message when nothing was removed.
+silent_when_empty: true
+
+# Stops players dropping items right before a clean-up, so nothing they
+# just dropped disappears a second later.
+drop_prevention:
+  enabled: true
+  # How long before the clean-up dropping is blocked.
+  duration: 30s
+
+# A clean-up is spread over several ticks instead of running in one go.
+# This is how much of each tick it may use. Lower is smoother but slower.
+performance:
+  max_ms_per_tick: 3
+
+# Runs an extra clean-up when the server starts to struggle.
+tps_trigger:
+  enabled: false
+  # Clean up when the 1 minute TPS drops below this.
+  below: 16.0
+  check_every: 10s
+  # Wait at least this long before triggering again.
+  cooldown: 2m
+
+
+items:
+  enabled: true
+
+  # Worlds where dropped items are never removed.
+  disabled_worlds: []
+
+  # Items younger than this are left alone.
+  minimum_age: 10s
+
+  materials:
+    # blacklist: listed materials are kept, everything else can be removed.
+    # whitelist: only listed materials can be removed.
+    mode: blacklist
+    # Material names or item tags (#minecraft:swords).
+    list:
+      - "#minecraft:shulker_boxes"
+      - "#minecraft:head_armor"
+      - "#minecraft:chest_armor"
+      - "#minecraft:leg_armor"
+      - "#minecraft:foot_armor"
+      - "#minecraft:swords"
+      - "#minecraft:axes"
+      - "#minecraft:pickaxes"
+      - "#minecraft:shovels"
+      - "#minecraft:hoes"
+      - MACE
+      - SHIELD
+      - BOW
+      - CROSSBOW
+      - FISHING_ROD
+      - ELYTRA
+      - TOTEM_OF_UNDYING
+
+  # Items matching one of these are kept even if the list above would remove them.
+  protect:
+    # Renamed items.
+    named: true
+    # Items carrying scoreboard tags or custom data.
+    metadata: true
+    # Items that still remember who dropped them.
+    owner: false
+    # Overrides for single materials or tags.
+    specific:
+      "#minecraft:shulker_boxes":
+        metadata: true
+
+
+entities:
+  enabled: false
+
+  # Worlds where mobs are never removed.
+  disabled_worlds: []
+
+  types:
+    # whitelist: only listed mobs can be removed.
+    # blacklist: listed mobs are kept, every other mob can be removed.
+    mode: whitelist
+    list:
+      - ZOMBIE
+      - SKELETON
+      - CREEPER
+      - SPIDER
+      - CAVE_SPIDER
+      - ENDERMAN
+
+  protect:
+    # Mobs with a custom name.
+    named: true
+    # Mobs carrying scoreboard tags or custom data.
+    metadata: true
+    # Mobs that are on a scoreboard team.
+    team: true
+    # Mobs on a lead.
+    leashed: true
+    # Tamed pets.
+    tamed: true
+    # Adult animals still on their breeding cooldown.
+    bred: true
+    # Mobs wearing armor or holding something.
+    equipped: false
+    # Mobs with a player riding them.
+    vehicles: true
+    # Overrides for single mob types.
+    specific:
+      ZOMBIE:
+        equipped: true
+      SKELETON:
+        equipped: true
