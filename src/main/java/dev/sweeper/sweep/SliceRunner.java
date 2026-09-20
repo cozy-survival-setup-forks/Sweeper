@@ -68,6 +68,9 @@ final class SliceRunner {
 
         private Kind kind = Kind.ITEMS;
         private Iterator<? extends Entity> current;
+        private Job job;
+        private org.bukkit.Chunk[] chunks;
+        private int chunkIndex;
         private int items;
         private int mobs;
         private long ticks;
@@ -142,17 +145,36 @@ final class SliceRunner {
             }
         }
 
+        /**
+         * Moves on to the next chunk of the current world, or to the next world. Chunks are looked at one at a
+         * time, so listing the entities of a big world never happens in one go.
+         */
         private boolean nextJob() {
-            final Job job = jobs.poll();
-            if (job == null) {
-                current = null;
-                return false;
+            while (true) {
+                if (chunks != null) {
+                    while (chunkIndex < chunks.length) {
+                        final org.bukkit.Chunk chunk = chunks[chunkIndex++];
+                        if (!chunk.isLoaded()) {
+                            continue;
+                        }
+                        final Entity[] entities = chunk.getEntities();
+                        if (entities.length > 0) {
+                            current = java.util.Arrays.asList(entities).iterator();
+                            return true;
+                        }
+                    }
+                    chunks = null;
+                }
+
+                job = jobs.poll();
+                if (job == null) {
+                    current = null;
+                    return false;
+                }
+                kind = job.kind();
+                chunks = job.world().getLoadedChunks();
+                chunkIndex = 0;
             }
-            kind = job.kind();
-            current = kind == Kind.ITEMS
-                    ? job.world().getEntitiesByClass(Item.class).iterator()
-                    : job.world().getEntitiesByClass(Mob.class).iterator();
-            return true;
         }
 
         private void finish() {

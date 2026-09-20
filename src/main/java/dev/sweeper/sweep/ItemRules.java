@@ -25,6 +25,10 @@ final class ItemRules {
             return false;
         }
 
+        if (item.getPersistentDataContainer().has(dev.sweeper.guard.DeathDrops.KEEP)) {
+            return false;
+        }
+
         final ItemStack stack = item.getItemStack();
         final Material type = stack.getType();
         if (!removableType(type)) {

@@ -32,6 +32,7 @@ public final class SweeperPlugin extends JavaPlugin {
         service = new SweepService(this, () -> settings, messages);
 
         getServer().getPluginManager().registerEvents(prefs, this);
+        getServer().getPluginManager().registerEvents(new dev.sweeper.guard.DeathDrops(), this);
         getServer().getPluginManager().registerEvents(new DropGuard(() -> settings, service, prefs, messages), this);
 
         final SweeperCommand command = new SweeperCommand(this, service, prefs, messages);
