@@ -4,7 +4,7 @@ main: dev.sweeper.SweeperPlugin
 api-version: '1.21'
 description: Timed clean-ups for dropped items and mobs, built to stay light on the tick.
 authors:
-  - Cozy Survival
+  - Groovified
 
 dependencies:
   server:
