@@ -56,3 +56,7 @@ The jar ends up in `build/libs`. To try it on a local server:
 
 `config.yml` holds the timings and rules, `lang.yml` holds every message. Both are short and
 commented. Durations are written like `30s`, `10m` or `1h30m`.
+
+## License
+
+See `LICENSE`: free to run on your own servers, not for redistribution or resale.

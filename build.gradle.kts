@@ -44,6 +44,9 @@ tasks {
 
     jar {
         archiveFileName = "Sweeper-${project.version}.jar"
+        manifest {
+            attributes("Implementation-Vendor" to "Groovified / Blockie Studios")
+        }
     }
 
     runServer {
