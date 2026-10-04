@@ -54,6 +54,8 @@ public record Settings(General general, Items items, Entities entities) {
                            EntityFlags flags, Map<EntityType, EntityFlags> specific) {
     }
 
+    private static final long MIN_INTERVAL_SECONDS = 10;
+
     public static Settings load(FileConfiguration cfg, Logger log) {
         final Loader loader = new Loader(cfg, log);
         return new Settings(loader.general(), loader.items(), loader.entities());
@@ -69,12 +71,18 @@ public record Settings(General general, Items items, Entities entities) {
         }
 
         General general() {
-            final Duration interval = duration("interval", Duration.ofMinutes(10));
+            Duration interval = duration("interval", Duration.ofMinutes(10));
+            if (interval.toSeconds() < MIN_INTERVAL_SECONDS) {
+                log.warning("interval is shorter than " + MIN_INTERVAL_SECONDS + "s, using " + MIN_INTERVAL_SECONDS + "s");
+                interval = Duration.ofSeconds(MIN_INTERVAL_SECONDS);
+            }
             final List<Long> warnings = new ArrayList<>();
             for (String raw : cfg.getStringList("warning_times")) {
                 final long seconds = parse("warning_times", raw, Duration.ZERO).toSeconds();
                 if (seconds > 0 && seconds < interval.toSeconds()) {
                     warnings.add(seconds);
+                } else if (seconds > 0) {
+                    log.warning("warning_times: '" + raw + "' is not shorter than the interval, it will never be sent");
                 }
             }
             warnings.sort(Comparator.reverseOrder());
@@ -212,6 +220,10 @@ public record Settings(General general, Items items, Entities entities) {
         /** A material name, or an item tag written as #minecraft:swords. */
         private Set<Material> materials(String entry) {
             final String name = entry.trim();
+            if (name.isEmpty() || name.equals("#")) {
+                log.warning("Empty entry in the material list, skipping it");
+                return Set.of();
+            }
             if (name.startsWith("#")) {
                 final NamespacedKey key = NamespacedKey.fromString(name.substring(1).toLowerCase(Locale.ROOT));
                 final Tag<Material> tag = key == null ? null : Bukkit.getTag(Tag.REGISTRY_ITEMS, key, Material.class);
@@ -231,7 +243,7 @@ public record Settings(General general, Items items, Entities entities) {
 
         private EntityType entityType(String name) {
             final String lower = name.trim().toLowerCase(Locale.ROOT).replace(' ', '_');
-            final NamespacedKey key = NamespacedKey.fromString(lower);
+            final NamespacedKey key = lower.isEmpty() ? null : NamespacedKey.fromString(lower);
             final EntityType type = key == null ? null : Registry.ENTITY_TYPE.get(key);
             if (type == null) {
                 log.warning("Unknown entity type " + name + ", skipping it");

@@ -21,7 +21,8 @@ public final class SweepService {
     private final SliceRunner runner;
 
     private BukkitTask ticker;
-    private long remaining;
+    private volatile long remaining;
+    private volatile int cycle;
     private long secondsSinceTpsCheck;
     private long secondsSinceTpsSweep = Long.MAX_VALUE / 2;
     private volatile int lastRemoved;
@@ -54,9 +55,18 @@ public final class SweepService {
         return lastRemoved;
     }
 
+    /** The number of the next clean-up; the drop guard stamps items with it. */
+    public int cycle() {
+        return cycle;
+    }
+
     /** Starts a clean-up right now; returns false if one is already running. */
     public boolean sweepNow(Scope scope) {
-        return runner.start(scope, this::report);
+        if (runner.start(scope, cycle, this::report)) {
+            cycle++;
+            return true;
+        }
+        return false;
     }
 
     private void stopTicker() {
@@ -72,8 +82,11 @@ public final class SweepService {
         secondsSinceTpsSweep++;
 
         if (remaining <= 0) {
-            sweepNow(Scope.ALL);
+            if (!sweepNow(Scope.ALL)) {
+                plugin.getLogger().warning("A clean-up was still running when the next one was due, skipping it");
+            }
             remaining = general.interval().toSeconds();
+            secondsSinceTpsSweep = 0;
         } else if (general.warnings().contains(remaining)) {
             messages.broadcast("warning", Messages.text("time", TimeFormat.compact(remaining)));
         }
@@ -91,9 +104,10 @@ public final class SweepService {
 
         final double tps = Bukkit.getTPS()[0];
         if (tps < trigger.below() && secondsSinceTpsSweep >= trigger.cooldown().toSeconds()) {
-            secondsSinceTpsSweep = 0;
-            plugin.getLogger().info("TPS is " + String.format("%.1f", tps) + ", running an extra clean-up");
-            sweepNow(Scope.ALL);
+            if (sweepNow(Scope.ALL)) {
+                secondsSinceTpsSweep = 0;
+                plugin.getLogger().info("TPS is " + String.format("%.1f", tps) + ", running an extra clean-up");
+            }
         }
     }
 

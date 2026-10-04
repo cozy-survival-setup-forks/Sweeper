@@ -84,8 +84,7 @@ public final class SweeperCommand {
     }
 
     private int reload(CommandContext<CommandSourceStack> ctx) {
-        plugin.reload();
-        messages.send(sender(ctx), "reload");
+        messages.send(sender(ctx), plugin.reload() ? "reload" : "reload_failed");
         return Command.SINGLE_SUCCESS;
     }
 

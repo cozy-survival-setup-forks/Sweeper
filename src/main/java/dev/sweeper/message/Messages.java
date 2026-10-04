@@ -11,6 +11,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -38,37 +39,52 @@ public final class Messages {
     private final JavaPlugin plugin;
     private final PlayerPrefs prefs;
     private final MiniMessage mini = MiniMessage.miniMessage();
-    private final Map<String, Entry> entries = new HashMap<>();
-    private String enabledWord = "enabled";
-    private String disabledWord = "disabled";
+    private volatile Map<String, Entry> entries = new HashMap<>();
+    private volatile String enabledWord = "enabled";
+    private volatile String disabledWord = "disabled";
 
     public Messages(JavaPlugin plugin, PlayerPrefs prefs) {
         this.plugin = plugin;
         this.prefs = prefs;
     }
 
-    public void load() {
+    /**
+     * Reads lang.yml. A message missing from an older file falls back to the bundled one. A file that cannot be
+     * read leaves the messages as they were and returns false.
+     */
+    public boolean load() {
         final File file = new File(plugin.getDataFolder(), "lang.yml");
         if (!file.exists()) {
             plugin.saveResource("lang.yml", false);
         }
 
-        final YamlConfiguration lang = YamlConfiguration.loadConfiguration(file);
+        final YamlConfiguration lang = new YamlConfiguration();
+        try {
+            lang.load(file);
+        } catch (IOException | InvalidConfigurationException e) {
+            plugin.getLogger().severe("lang.yml could not be read: " + e.getMessage());
+            return false;
+        }
         try (Reader defaults = new InputStreamReader(plugin.getResource("lang.yml"), StandardCharsets.UTF_8)) {
             lang.setDefaults(YamlConfiguration.loadConfiguration(defaults));
+            lang.options().copyDefaults(true);
         } catch (IOException e) {
             plugin.getLogger().warning("Could not read the bundled lang.yml: " + e.getMessage());
         }
 
-        entries.clear();
+        final Map<String, Entry> fresh = new HashMap<>();
         for (String key : lang.getKeys(false)) {
             final ConfigurationSection section = lang.getConfigurationSection(key);
             if (section != null && !key.equals("states")) {
-                entries.put(key, readEntry(key, section));
+                fresh.put(key, readEntry(key, section));
             }
         }
-        enabledWord = lang.getString("states.enabled", "enabled");
-        disabledWord = lang.getString("states.disabled", "disabled");
+        final String on = lang.getString("states.enabled");
+        final String off = lang.getString("states.disabled");
+        entries = fresh;
+        enabledWord = on == null ? "enabled" : on;
+        disabledWord = off == null ? "disabled" : off;
+        return true;
     }
 
     private Entry readEntry(String key, ConfigurationSection section) {
@@ -82,7 +98,7 @@ public final class Messages {
                         Sound.Source.valueOf(soundSection.getString("source", "MASTER").toUpperCase(Locale.ROOT)),
                         (float) soundSection.getDouble("volume", 1.0),
                         (float) soundSection.getDouble("pitch", 1.0));
-            } catch (IllegalArgumentException e) {
+            } catch (RuntimeException e) {
                 plugin.getLogger().warning("lang.yml: bad sound for '" + key + "', it will play no sound");
             }
         }
@@ -90,9 +106,13 @@ public final class Messages {
                 section.getBoolean("enabled", true),
                 types.contains("chat"),
                 types.contains("actionbar"),
-                Legacy.toMiniMessage(section.getString("chat", "")),
-                Legacy.toMiniMessage(section.getString("actionbar", "")),
+                Legacy.toMiniMessage(orEmpty(section.getString("chat"))),
+                Legacy.toMiniMessage(orEmpty(section.getString("actionbar"))),
                 sound);
+    }
+
+    private static String orEmpty(String text) {
+        return text == null ? "" : text;
     }
 
     /** Accepts both {@code [chat, actionbar]} and the comma separated form {@code chat, actionbar}. */

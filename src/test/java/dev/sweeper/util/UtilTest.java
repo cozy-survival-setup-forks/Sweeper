@@ -26,6 +26,13 @@ class UtilTest {
     }
 
     @Test
+    void hugeDurationsAreRejectedNotWrapped() {
+        assertThrows(IllegalArgumentException.class, () -> Durations.parse("999999999999999d"));
+        assertThrows(IllegalArgumentException.class, () -> Durations.parse("99999999999999999999"));
+        assertThrows(IllegalArgumentException.class, () -> Durations.parse("9999999999999999h9999999999999999h"));
+    }
+
+    @Test
     void formatsCountdowns() {
         assertEquals("0s", TimeFormat.compact(0));
         assertEquals("45s", TimeFormat.compact(45));

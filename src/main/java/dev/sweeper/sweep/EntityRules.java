@@ -19,7 +19,7 @@ final class EntityRules {
 
     private static final EquipmentSlot[] WORN = {
             EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET,
-            EquipmentSlot.HAND, EquipmentSlot.OFF_HAND
+            EquipmentSlot.HAND, EquipmentSlot.OFF_HAND, EquipmentSlot.BODY, EquipmentSlot.SADDLE
     };
 
     private final Settings.Entities settings;
@@ -53,13 +53,30 @@ final class EntityRules {
         if (flags.tamed() && mob instanceof Tameable pet && pet.isTamed()) {
             return false;
         }
-        if (flags.bred() && mob instanceof Breedable animal && animal.isAdult() && animal.getAge() > 0) {
+        if (flags.bred() && mob instanceof Breedable animal && (!animal.isAdult() || animal.getAge() > 0)) {
             return false;
         }
         if (flags.vehicles() && hasPlayerPassenger(mob)) {
             return false;
         }
+        if (carriesPickedUpGear(mob)) {
+            return false;
+        }
         return !(flags.equipped() && isEquipped(mob));
+    }
+
+    /**
+     * A mob that picked something up (say a sword from a player it killed) keeps it with a guaranteed drop
+     * chance. Removing that mob would delete the item, so it is never removed, whatever the flags say.
+     */
+    private static boolean carriesPickedUpGear(Mob mob) {
+        final EntityEquipment equipment = mob.getEquipment();
+        for (EquipmentSlot slot : WORN) {
+            if (mob.canUseEquipmentSlot(slot) && !equipment.getItem(slot).isEmpty() && equipment.getDropChance(slot) > 1f) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean hasPlayerPassenger(Mob mob) {
@@ -74,7 +91,7 @@ final class EntityRules {
     private static boolean isEquipped(Mob mob) {
         final EntityEquipment equipment = mob.getEquipment();
         for (EquipmentSlot slot : WORN) {
-            if (!equipment.getItem(slot).isEmpty()) {
+            if (mob.canUseEquipmentSlot(slot) && !equipment.getItem(slot).isEmpty()) {
                 return true;
             }
         }

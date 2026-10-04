@@ -67,18 +67,23 @@ protection_toggle:
     volume: 1.0
     pitch: 1.2
 
-drop_blocked:
+drop_kept:
   # Placeholders: <time>
   enabled: true
   type: [chat, actionbar]
-  chat: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>Please wait <#FFD166><time></#FFD166> before dropping items."
-  actionbar: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>Please wait <#FFD166><time></#FFD166> before dropping items."
+  chat: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>What you drop now stays out of the clean-up in <#FFD166><time></#FFD166>."
+  actionbar: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>What you drop now stays out of the clean-up in <#FFD166><time></#FFD166>."
   sound:
     enabled: true
-    key: "minecraft:entity.villager.no"
+    key: "minecraft:entity.item.pickup"
     source: MASTER
     volume: 1.0
     pitch: 1.0
+
+reload_failed:
+  enabled: true
+  type: [chat]
+  chat: "<bold><#C8B4FF>SWEEPER</#C8B4FF></bold> <#A7B6C4>⏵</#A7B6C4> <white>A file could not be read, <#FF8C8C>keeping the old settings</#FF8C8C>. See the console."
 
 reload:
   enabled: true

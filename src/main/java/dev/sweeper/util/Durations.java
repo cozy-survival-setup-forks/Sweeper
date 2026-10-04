@@ -33,7 +33,12 @@ public final class Durations {
                 break;
             }
             end = matcher.end();
-            seconds += Long.parseLong(matcher.group(1)) * unitSeconds(matcher.group(2).charAt(0));
+            try {
+                seconds = Math.addExact(seconds, Math.multiplyExact(Long.parseLong(matcher.group(1)),
+                        unitSeconds(matcher.group(2).charAt(0))));
+            } catch (ArithmeticException e) {
+                throw new IllegalArgumentException("Too long: " + text);
+            }
         }
         if (end == 0 || end != s.length()) {
             throw new IllegalArgumentException("Not a duration: " + text);

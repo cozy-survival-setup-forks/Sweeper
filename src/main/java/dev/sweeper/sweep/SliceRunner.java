@@ -45,11 +45,11 @@ final class SliceRunner {
     }
 
     /** Starts a clean-up; returns false if one is already in progress. */
-    boolean start(Scope scope, Consumer<SweepResult> done) {
+    boolean start(Scope scope, int cycle, Consumer<SweepResult> done) {
         if (task != null) {
             return false;
         }
-        final Run run = new Run(settings.get(), scope, done);
+        final Run run = new Run(settings.get(), scope, cycle, done);
         task = Bukkit.getScheduler().runTaskTimer(plugin, run, 1L, 1L);
         return true;
     }
@@ -75,13 +75,13 @@ final class SliceRunner {
         private int mobs;
         private long ticks;
 
-        Run(Settings config, Scope scope, Consumer<SweepResult> done) {
+        Run(Settings config, Scope scope, int cycle, Consumer<SweepResult> done) {
             this.budgetNanos = config.general().budgetNanos();
             this.done = done;
 
             final boolean doItems = scope.includesItems() && config.items().enabled();
             final boolean doMobs = scope.includesEntities() && config.entities().enabled();
-            this.itemRules = doItems ? new ItemRules(config.items()) : null;
+            this.itemRules = doItems ? new ItemRules(config.items(), cycle) : null;
             this.entityRules = doMobs ? new EntityRules(config.entities()) : null;
 
             for (World world : Bukkit.getWorlds()) {
@@ -157,11 +157,9 @@ final class SliceRunner {
                         if (!chunk.isLoaded()) {
                             continue;
                         }
-                        final Entity[] entities = chunk.getEntities();
-                        if (entities.length > 0) {
-                            current = java.util.Arrays.asList(entities).iterator();
-                            return true;
-                        }
+                        // Even an empty chunk ends the call, so the time budget is checked chunk by chunk.
+                        current = java.util.Arrays.asList(chunk.getEntities()).iterator();
+                        return true;
                     }
                     chunks = null;
                 }
