@@ -10,11 +10,14 @@ keeping.
 - Work is spread over several ticks with a per-tick time limit, so thousands of drops do not
   cause a freeze
 - Items: keep or remove by material or item tag, a minimum age, and protection for renamed items,
-  items with tags or data, and items that remember who dropped them
-- Mobs: keep or remove by type, and protection for named, tagged, team, leashed, tamed, recently
-  bred, equipped or ridden mobs
+  items with tags, custom data, enchantments, lore, book text or contents (bundles, containers), and
+  items that remember who dropped them. Death drops are always kept
+- Mobs: keep or remove by type, and protection for named, tagged, team, leashed, tamed, baby or recently
+  bred, equipped (including saddles) or ridden mobs. A mob that picked up an item, like a sword from a
+  player it killed, is never removed
 - Separate world lists for items and mobs
-- Drop protection just before a clean-up, which each player can switch off for themselves
+- Drop protection: what a player drops shortly before a clean-up is kept out of it, so nothing they
+  just dropped disappears a second later. Drops are never blocked. Each player can switch it off for themselves
 - Every message can be chat, action bar or both, with an optional sound
 - Optional extra clean-up when the TPS drops
 - PlaceholderAPI support
@@ -27,10 +30,13 @@ keeping.
 | `/sweeper messages` | Switch clean-up messages on or off for yourself | `sweeper.command.messages` |
 | `/sweeper protection` | Switch your drop protection on or off | `sweeper.command.protection` |
 | `/sweeper clean [items\|entities]` | Run a clean-up now | `sweeper.admin` |
-| `/sweeper reload` | Reload `config.yml` and `lang.yml` | `sweeper.admin` |
+| `/sweeper reload` | Reload `config.yml` and `lang.yml`; a file that cannot be read keeps the old settings | `sweeper.admin` |
 
-`/sweep` works as well. `sweeper.bypass.dropguard` lets someone drop items during the
-protected window.
+`/sweep` works as well. `sweeper.bypass.dropguard` makes someone's drops count as normal ones during the
+protected window; nobody has it by default, not even operators.
+
+`/sweeper clean` and the TPS trigger start at once, with no warning. Items younger than `minimum_age` and
+items dropped in the protected window are still left alone.
 
 ## Placeholders
 
