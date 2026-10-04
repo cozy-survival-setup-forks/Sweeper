@@ -26,6 +26,15 @@ public final class SweeperPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        try {
+            enableInner();
+        } catch (RuntimeException e) {
+            getLogger().severe("Sweeper could not start: " + e.getMessage() + ". Check config.yml and lang.yml.");
+            getServer().getPluginManager().disablePlugin(this);
+        }
+    }
+
+    private void enableInner() {
         saveDefaultConfig();
         settings = loadSettings();
 
@@ -53,6 +62,8 @@ public final class SweeperPlugin extends JavaPlugin {
         }
 
         service.start();
+        Metrics.start(this);
+        Banner.print(this, "Thanks for keeping the server light.");
     }
 
     @Override

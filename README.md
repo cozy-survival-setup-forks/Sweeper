@@ -57,6 +57,12 @@ The jar ends up in `build/libs`. To try it on a local server:
 `config.yml` holds the timings and rules, `lang.yml` holds every message. Both are short and
 commented. Durations are written like `30s`, `10m` or `1h30m`.
 
+## Telemetry
+
+On startup Sweeper sends a small anonymous beacon (plugin name/version, server software/version,
+online/max player counts, and a random ID with no player data) so we know which versions are in
+use. Turn it off with `metrics.enabled: false` in `config.yml`.
+
 ## License
 
 See `LICENSE`: free to run on your own servers, not for redistribution or resale.
