@@ -128,3 +128,10 @@ entities:
         equipped: true
       SKELETON:
         equipped: true
+
+# Anonymous usage beacon: plugin name/version, server software/version and online/max player
+# counts, nothing else. Set to false to turn it off.
+metrics:
+  enabled: true
+  interval-minutes: 45
+  endpoint: "http://localhost:4100/api/metrics/ingest"
