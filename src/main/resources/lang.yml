@@ -1,3 +1,4 @@
+lang-version: 1
 # Sweeper - lang.yml
 # Every message can be sent as chat, action bar or both, with an optional sound.
 # Text supports MiniMessage as well as &a and &#RRGGBB codes.

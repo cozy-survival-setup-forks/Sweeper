@@ -49,7 +49,13 @@ public final class SweeperCommand {
                         .then(Commands.literal("entities").executes(ctx -> clean(ctx, Scope.ENTITIES))))
                 .then(Commands.literal("reload")
                         .requires(source -> source.getSender().hasPermission(Perms.ADMIN))
-                        .executes(this::reload));
+                        .executes(this::reload))
+                .then(Commands.literal("doctor")
+                        .requires(source -> source.getSender().hasPermission(Perms.ADMIN))
+                        .executes(this::doctor))
+                .then(Commands.literal("backup")
+                        .requires(source -> source.getSender().hasPermission(Perms.ADMIN))
+                        .then(Commands.literal("now").executes(this::backup)));
     }
 
     private int timer(CommandContext<CommandSourceStack> ctx) {
@@ -80,6 +86,16 @@ public final class SweeperCommand {
     private int clean(CommandContext<CommandSourceStack> ctx, Scope scope) {
         final CommandSender sender = sender(ctx);
         messages.send(sender, service.sweepNow(scope) ? "clean_started" : "clean_busy");
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int doctor(CommandContext<CommandSourceStack> ctx) {
+        plugin.doctor().forEach(sender(ctx)::sendPlainMessage);
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private int backup(CommandContext<CommandSourceStack> ctx) {
+        sender(ctx).sendPlainMessage(plugin.backupNow() ? "Backup made and checked." : "The backup FAILED, see the console.");
         return Command.SINGLE_SUCCESS;
     }
 

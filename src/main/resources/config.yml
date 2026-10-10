@@ -1,3 +1,4 @@
+config-version: 1
 # Sweeper - config.yml
 # Durations look like 30s, 10m, 1h30m. Reload with /sweeper reload.
 
@@ -133,4 +134,3 @@ entities:
 # counts, nothing else. Set to false to turn it off.
 metrics:
   enabled: true
-  interval-minutes: 45

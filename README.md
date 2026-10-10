@@ -63,11 +63,19 @@ The jar ends up in `build/libs`. To try it on a local server:
 `config.yml` holds the timings and rules, `lang.yml` holds every message. Both are short and
 commented. Durations are written like `30s`, `10m` or `1h30m`.
 
+## Keeping your files safe
+
+- `config.yml` and `lang.yml` start with a `config-version` / `lang-version` number. After an update, new settings are added to your files with their comments, and nothing you changed is touched. The old file is kept next to it as `<name>.<date>.bak` (the newest 5). A setting is only removed when the changelog says so.
+- A value with a mistake (a negative time, an item that does not exist, text where a number belongs) is named in the console by file and key. On a reload, the settings in use stay as they were.
+- Files are written to a temporary file and moved into place, with the previous version kept as `.bak`. A file that cannot be read is restored from its `.bak`, and the unreadable one is kept as `.broken-<time>`.
+- A file or database that was made by a newer version of the plugin is left alone and a warning is logged.
+- `/sweeper doctor` shows the health of the files, versions, last backup and recent save failures (no player data). `/sweeper backup now` makes a checked backup right away. Both need the admin permission.
+
 ## Telemetry
 
 On startup Sweeper sends a small anonymous beacon (plugin name/version, server software/version,
 online/max player counts, and a random ID with no player data) so we know which versions are in
-use. Turn it off with `metrics.enabled: false` in `config.yml`.
+use. Turn it off with `metrics.enabled: false` in `config.yml`. The random ID is kept as `server-id` in `data.yml` (older versions kept it in a `.server-id` file, which is moved over unchanged). The address and the interval are fixed in the plugin and are not settings.
 
 ## License
 
